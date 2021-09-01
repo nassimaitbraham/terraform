@@ -6,14 +6,21 @@ terraform {
       version = "~>2.0"
     }
   }
+  # Save Terraform State To Remote Location In Azure storage account
+  backend "azurerm" {  
+    resource_group_name  = "Terraform-rg"  
+    storage_account_name = "aitechterraformstate"  
+    container_name       = "terraform-state"  
+    key                  = "terraform.tfstate"  
+  }  
 }
 
 provider "azurerm" {
   features {}
-  subscription_id   = "<azure_subscription_id>"
-  tenant_id         = "<azure_subscription_tenant_id>"
-  client_id         = "<service_principal_appid>"
-  client_secret     = "<service_principal_password>"
+    subscription_id   = "<azure_subscription_id>"
+    tenant_id         = "<azure_subscription_tenant_id>"
+    client_id         = "<service_principal_appid>"
+    client_secret     = "<service_principal_password>"
 }
 
 # creation du ressource group azure
@@ -22,7 +29,7 @@ resource "azurerm_resource_group" "rg" {
   location = var.resource_location
   
   tags = {
-    environment = var.resource_environment_dev
+    environment = var.resource_environment
   }
 }
 
@@ -33,7 +40,7 @@ resource "azurerm_virtual_network" "myVnet" {
   location = var.resource_location
   resource_group_name = azurerm_resource_group.rg.name
   tags = {
-    environment = var.resource_environment_dev
+    environment = var.resource_environment
   }
 }
 
@@ -52,7 +59,7 @@ resource "azurerm_public_ip" "myPublicIP" {
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method = var.resource_ip_allocation_dynamic_type
   tags = {
-    environment = var.resource_environment_dev
+    environment = var.resource_environment
   }
 }
 
@@ -75,7 +82,7 @@ resource "azurerm_network_security_group" "myNSG" {
     source_port_range = var.resource_target_ip_address_all
     }
    tags = {
-    environment = var.resource_environment_dev
+    environment = var.resource_environment
   }
 }
 
@@ -93,7 +100,7 @@ resource "azurerm_network_interface" "myNIC" {
     public_ip_address_id = azurerm_public_ip.myPublicIP.id
   }
   tags = {
-    environment = var.resource_environment_dev
+    environment = var.resource_environment
   }
 }
 
@@ -107,11 +114,6 @@ resource "azurerm_network_interface_security_group_association" "nsg_nic_associa
 resource "tls_private_key" "key_ssh" {
   algorithm = var.resource_ssh_algorithm_rsa_name
   rsa_bits = var.resource_ssh_algorithm_rsa_bits
-}
-
-output "tls_private_key" { 
-    value = tls_private_key.key_ssh.private_key_pem 
-    sensitive = true
 }
 
 # Creation d'une machine virtuel
@@ -142,6 +144,6 @@ resource "azurerm_linux_virtual_machine" "myVM" {
         public_key     = tls_private_key.key_ssh.public_key_openssh
     }
   tags = {
-    environment = var.resource_environment_dev
+    environment = var.resource_environment
   }
 }

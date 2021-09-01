@@ -1,10 +1,11 @@
-variable "resource_environment_dev" {
-  default = "Development"
+variable "resource_environment" {
+  description = "variable to define the type of environment"
 }
 variable "resource_group_name" {
-  default = "myResourceGroup"
+  description = "Azure resource groupe name"
 }
 
+#TODO move all variables to terraform.*.tfvars file and add all description to variables
 variable "resource_location" {
   default = "eastus"
 }
