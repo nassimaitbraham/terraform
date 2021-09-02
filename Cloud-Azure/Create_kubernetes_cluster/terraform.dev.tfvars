@@ -1,0 +1,13 @@
+resource_group_name      = "kubernetesRg"
+node_resource_group_name = "kubernetesNodeRg"
+resource_location        = "eastus"
+cluster_name             = "myAKSCluster"
+kubernetes_version       = "1.20.9"
+default_node_pool_name   = "system"
+system_node_count        =  3
+vm_size                  = "Standard_B2s"
+vm_scale_sets            = "VirtualMachineScaleSets"
+enable_auto_scaling      = false
+identity_type            = "SystemAssigned"
+load_balancer_sku        = "Standard"
+network_plugin           = "kubenet"
